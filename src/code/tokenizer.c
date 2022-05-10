@@ -6,6 +6,7 @@
 #include "../config.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 SLANG_Token **tokenBuffer;
 unsigned posPtr;
@@ -15,14 +16,38 @@ unsigned bufferSize;
 void SLANG_Tokenizer_Init() {
     posPtr = 0;
     bufferSize = 10;
-    tokenBuffer = malloc(sizeof(SLANG_Token*) * 10);
+    tokenBuffer = malloc(sizeof(SLANG_Token *) * 10);
     if (SLANG_CFG_VerboseMode)
         printf("Initialized Tokenizer (buff_size:%d, pos:%d)\n", bufferSize, posPtr);
     SLANG_Tokenizer_ClearBuffer(0);
 }
 
+void SLANG_Tokenizer_Analyze(char *str) {
+    size_t len = strlen(str);
+    char buff[128];
+    int tokPos = 0;
+    SLANG_TokenType type;
+    for (int i = 0; i < len; i++) {
+
+        if (str[i] == SLANG_Tokenizer_GetToken(STRING_LITERAL)) {
+            if(type == STRING_LITERAL) {
+                type = UNKNOWN;
+                buff[tokPos++] = str[i];
+                SLANG_Tokenizer_AddToken(STRING_LITERAL, i, buff);
+                tokPos = 0;
+            }
+        }
+    }
+}
+
+void clearBuff(char *buff, unsigned len) {
+    for (int i = 0; i < len; i++) {
+        buff[i] = 0x0;
+    }
+}
+
 unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, char *val) {
-    if (posPtr == (bufferSize-1)) {
+    if (posPtr == (bufferSize - 1)) {
         tokenBuffer = realloc(tokenBuffer, (bufferSize + 10) * sizeof(SLANG_Token));
         bufferSize += 10;
         SLANG_Tokenizer_ClearBuffer(1);
@@ -38,9 +63,11 @@ unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, char *val)
     return posPtr;
 }
 
+void SLANG
+
 void SLANG_Tokenizer_ClearBuffer(unsigned usePos) {
 
-    for (int i = (usePos ? (posPtr+1) : 0); i < bufferSize; i++) {
+    for (int i = (usePos ? (posPtr + 1) : 0); i < bufferSize; i++) {
         tokenBuffer[i] = malloc(sizeof(SLANG_Token));
     }
 }
@@ -53,7 +80,7 @@ void SLANG_Tokenizer_Invalidate() {
 }
 
 // Transfer tokentype to ascii char > returns 0x00 when not found
-char SLANG_GetToken(SLANG_TokenType type) {
+char SLANG_Tokenizer_GetToken(SLANG_TokenType type) {
     switch (type) {
         case RPARENTHESE:
             return 0x29;

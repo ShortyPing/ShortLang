@@ -7,28 +7,32 @@
 #include "lifecycle.h"
 #include <stdlib.h>
 #include "code/tokenizer.h"
+#include "string.h"
 
 void SLANG_Conf() {
     SLANG_CFG_VerboseMode = 0;
     SLANG_CFG_MemorySize = 128;
 }
 
-int main(int argc, char* argv[]) {
-    printf("SLang Interpreter v%s made by %s\n", SLANG_VERSION, SLANG_AUTHORS);
+int main(int argc, char *argv[]) {
+
 
     SLANG_Conf();
 
-    for(int i = 0; i < argc; i++) {
-        if(!(strcmp(argv[i], "--verbose"))) {
+    for (int i = 0; i < argc; i++) {
+
+        if (!(strcmp(argv[i], "--verbose"))) {
             SLANG_CFG_VerboseMode = 1;
         }
-        if(!(strcmp(argv[i], "--file"))) {
-            SLANG_CFG_File = argv[i+1];
-
+        if (!(strcmp(argv[i], "--file"))) {
+            SLANG_CFG_File = argv[i + 1];
+        }
+        if (!(strcmp(argv[i], "--heap"))) {
+            SLANG_CFG_MemorySize = atol(argv[i + 1]);
         }
     }
     SLANG_MEMORY_Init();
-    if(SLANG_CFG_File == NULL) {
+    if (SLANG_CFG_File == NULL) {
         printf("Error: No file specified\n");
         SLANG_LIFECYCLE_Exit(1);
     }

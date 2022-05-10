@@ -1,3 +1,0 @@
-cmake .
-make
-./dist/SLang
