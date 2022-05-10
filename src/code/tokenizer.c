@@ -21,23 +21,28 @@ void SLANG_Tokenizer_Init() {
     SLANG_Tokenizer_ClearBuffer(0);
 }
 
-//TODO: fix automatic limit increase
 unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, char *val) {
     if (posPtr == (bufferSize-1)) {
-        printf("ABASA %lu\n", (sizeof(SLANG_Token) * bufferSize) + (sizeof(SLANG_Token) * 10));
-        tokenBuffer = realloc(tokenBuffer, ((sizeof(SLANG_Token*) * bufferSize) + (sizeof(SLANG_Token*) * 10)));
+        tokenBuffer = realloc(tokenBuffer, (bufferSize + 10) * sizeof(SLANG_Token));
         bufferSize += 10;
+        SLANG_Tokenizer_ClearBuffer(1);
     }
+
+
     SLANG_Token *token = tokenBuffer[posPtr++];
+
     token->pos = pos;
     token->type = type;
     token->value = val;
+
     return posPtr;
 }
 
 void SLANG_Tokenizer_ClearBuffer(unsigned usePos) {
-    for (int i = (usePos ? posPtr : 0); i < bufferSize; i++)
+
+    for (int i = (usePos ? (posPtr+1) : 0); i < bufferSize; i++) {
         tokenBuffer[i] = malloc(sizeof(SLANG_Token));
+    }
 }
 
 // Frees all memory used by tokenizer

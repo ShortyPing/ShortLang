@@ -28,6 +28,7 @@ void SLANG_MEMORY_Init() {
 }
 
 int SLANG_MEMORY_Add(void *ptr) {
+    
     for (int i = 0; i < SLANG_CFG_MemorySize; i++) {
         if (memoryPool[i] == nullPtr) {
             if (SLANG_CFG_VerboseMode)
