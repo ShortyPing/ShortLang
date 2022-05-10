@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "memory.h"
 #include "lifecycle.h"
+#include "code/tokenizer.h"
 
 void SLANG_FILE_ReadFile(char* p) {
     FILE* fptr;
@@ -32,8 +33,8 @@ void SLANG_FILE_ReadFile(char* p) {
     }
     text[filesize] = '\0';
     fclose(fptr);
+    SLANG_Tokenizer_Analyze(text);
     SLANG_MEMORY_ManFree(txtId);
     // Make something with text lol
-
 
 }

@@ -38,20 +38,10 @@ int main(int argc, char *argv[]) {
     }
     printf("Loading File (%s)...\n", SLANG_CFG_File);
 
+    SLANG_Tokenizer_Init();
 
     SLANG_FILE_ReadFile(SLANG_CFG_File);
-    SLANG_Tokenizer_Init();
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
-    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+
 
     SLANG_LIFECYCLE_Exit(0);
     return 0;

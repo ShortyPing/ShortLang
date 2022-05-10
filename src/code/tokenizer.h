@@ -44,12 +44,13 @@ typedef struct {
     SLANG_TokenType type;
     unsigned pos;
     char* value;
+    unsigned line;
 } SLANG_Token;
 
 void SLANG_Tokenizer_ClearBuffer(unsigned);
 void SLANG_Tokenizer_Init();
 void SLANG_Tokenizer_Invalidate();
-unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType, unsigned, char*);
+unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType, unsigned, unsigned, char*);
 char SLANG_Tokenizer_GetToken(SLANG_TokenType);
 void SLANG_Tokenizer_Analyze(char*);
 #endif //SLANG_TOKENIZER_H

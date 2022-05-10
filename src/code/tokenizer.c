@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 SLANG_Token **tokenBuffer;
 unsigned posPtr;
@@ -22,31 +23,92 @@ void SLANG_Tokenizer_Init() {
     SLANG_Tokenizer_ClearBuffer(0);
 }
 
-void SLANG_Tokenizer_Analyze(char *str) {
-    size_t len = strlen(str);
-    char buff[128];
-    int tokPos = 0;
-    SLANG_TokenType type;
-    for (int i = 0; i < len; i++) {
-
-        if (str[i] == SLANG_Tokenizer_GetToken(STRING_LITERAL)) {
-            if(type == STRING_LITERAL) {
-                type = UNKNOWN;
-                buff[tokPos++] = str[i];
-                SLANG_Tokenizer_AddToken(STRING_LITERAL, i, buff);
-                tokPos = 0;
-            }
-        }
-    }
-}
-
 void clearBuff(char *buff, unsigned len) {
     for (int i = 0; i < len; i++) {
         buff[i] = 0x0;
     }
 }
 
-unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, char *val) {
+void SLANG_Tokenizer_Analyze(char *str) {
+    size_t len = strlen(str);
+    const int buffSize = 128;
+    char buff[buffSize];
+    clearBuff(buff, buffSize);
+    int tokPos = 0;
+    SLANG_TokenType type = UNKNOWN;
+    int line = 1;
+    for (int i = 0; i < len; i++) {
+
+        if(str[i] == 0x0a) {
+            line++;
+        }
+
+        // check if current char is string literal (")
+        if (str[i] == SLANG_Tokenizer_GetToken(STRING_LITERAL)) {
+            // if scope type is string literal it closes current string literal and submits the token to the buffer
+            // else it continues to add characters to buffer
+            if (type == STRING_LITERAL) {
+                type = UNKNOWN;
+                SLANG_Tokenizer_AddToken(STRING_LITERAL, i, line, buff);
+                tokPos = 0;
+                clearBuff(buff, buffSize);
+                continue;
+            } else {
+                type = STRING_LITERAL;
+                continue;
+            }
+
+        } else {
+            if (type == STRING_LITERAL) {
+                buff[tokPos++] = str[i];
+                continue;
+            }
+        }
+
+        // Check if is braces or parentheses etc. and submit them as tokens
+        if(str[i] == SLANG_Tokenizer_GetToken(LPARENTHESE)) {
+            buff[tokPos++] = str[i];
+            SLANG_Tokenizer_AddToken(LPARENTHESE, i, line, buff);
+            clearBuff(buff, buffSize);
+            tokPos = 0;
+            continue;
+        }
+        if(str[i] == SLANG_Tokenizer_GetToken(RPARENTHESE)) {
+            buff[tokPos++] = str[i];
+            SLANG_Tokenizer_AddToken(RPARENTHESE, i, line, buff);
+            clearBuff(buff, buffSize);
+            tokPos = 0;
+            continue;
+        }
+
+        // check if is digit, when there is not int literal start a new one else add to buffer... when it detects a non-digit
+        // character in INT_LITERAL scope then terminate the literal and submit the token
+        if (isdigit(str[i])) {
+            if (type != INT_LITERAL) {
+                type = INT_LITERAL;
+            }
+            buff[tokPos++] = str[i];
+            continue;
+        } else {
+            if(type == INT_LITERAL) {
+                type = UNKNOWN;
+                SLANG_Tokenizer_AddToken(INT_LITERAL, i, line, buff);
+            }
+            clearBuff(buff, buffSize);
+            tokPos = 0;
+        }
+
+
+
+        // buffer clear... should not be executed
+        // this clears the buffer if anything wrong happens
+        clearBuff(buff, buffSize);
+        tokPos = 0;
+    }
+}
+
+unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, unsigned line, char *val) {
+    printf("Added token type %d value %s\n", type, val);
     if (posPtr == (bufferSize - 1)) {
         tokenBuffer = realloc(tokenBuffer, (bufferSize + 10) * sizeof(SLANG_Token));
         bufferSize += 10;
@@ -59,11 +121,11 @@ unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, char *val)
     token->pos = pos;
     token->type = type;
     token->value = val;
+    token->line = line;
 
     return posPtr;
 }
 
-void SLANG
 
 void SLANG_Tokenizer_ClearBuffer(unsigned usePos) {
 
