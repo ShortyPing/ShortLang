@@ -129,6 +129,30 @@ SLang/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SLang.dir/build.make CMakeFiles/SLang.dir/build
 .PHONY : SLang/fast
 
+src/code/tokenizer.o: src/code/tokenizer.c.o
+.PHONY : src/code/tokenizer.o
+
+# target to build an object file
+src/code/tokenizer.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SLang.dir/build.make CMakeFiles/SLang.dir/src/code/tokenizer.c.o
+.PHONY : src/code/tokenizer.c.o
+
+src/code/tokenizer.i: src/code/tokenizer.c.i
+.PHONY : src/code/tokenizer.i
+
+# target to preprocess a source file
+src/code/tokenizer.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SLang.dir/build.make CMakeFiles/SLang.dir/src/code/tokenizer.c.i
+.PHONY : src/code/tokenizer.c.i
+
+src/code/tokenizer.s: src/code/tokenizer.c.s
+.PHONY : src/code/tokenizer.s
+
+# target to generate assembly for a file
+src/code/tokenizer.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SLang.dir/build.make CMakeFiles/SLang.dir/src/code/tokenizer.c.s
+.PHONY : src/code/tokenizer.c.s
+
 src/config.o: src/config.c.o
 .PHONY : src/config.o
 
@@ -258,6 +282,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... SLang"
+	@echo "... src/code/tokenizer.o"
+	@echo "... src/code/tokenizer.i"
+	@echo "... src/code/tokenizer.s"
 	@echo "... src/config.o"
 	@echo "... src/config.i"
 	@echo "... src/config.s"

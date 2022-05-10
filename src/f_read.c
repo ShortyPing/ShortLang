@@ -21,7 +21,8 @@ void SLANG_FILE_ReadFile(char* p) {
     filesize = ftell(fptr) * sizeof(char); // Filesize
 
     char *text = malloc(filesize + 1);
-    SLANG_MEMORY_Add(text);
+    int txtId = SLANG_MEMORY_Add(text);
+
     int buff;
 
     unsigned i = 0;
@@ -31,6 +32,8 @@ void SLANG_FILE_ReadFile(char* p) {
     }
     text[filesize] = '\0';
     fclose(fptr);
-
+    SLANG_MEMORY_ManFree(txtId);
     // Make something with text lol
+
+
 }

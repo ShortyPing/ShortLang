@@ -6,6 +6,8 @@
 #include "memory.h"
 #include "lifecycle.h"
 #include <stdlib.h>
+#include "code/tokenizer.h"
+
 void SLANG_Conf() {
     SLANG_CFG_VerboseMode = 0;
     SLANG_CFG_MemorySize = 128;
@@ -34,6 +36,8 @@ int main(int argc, char* argv[]) {
 
 
     SLANG_FILE_ReadFile(SLANG_CFG_File);
+    SLANG_Tokenizer_Init();
+
     SLANG_LIFECYCLE_Exit(0);
     return 0;
 }

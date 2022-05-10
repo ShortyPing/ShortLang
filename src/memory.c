@@ -16,9 +16,9 @@ void SLANG_MEMORY_Init() {
     currentSize = -1;
     nullPtr = malloc(1);
 
-    if(SLANG_CFG_VerboseMode)
-        printf("Initialized NULLPTR at(%p)\n", nullPtr);
     if (SLANG_CFG_VerboseMode) {
+
+        printf("Initialized NULLPTR at(%p)\n", nullPtr);
         printf("Initialized Memory-Manager (m_size:%lu, m_size_b:%lu, sp:%p, c_size:%d)\n", SLANG_CFG_MemorySize,
                SLANG_CFG_MemorySize * sizeof(void *), memoryPool, currentSize);
     }
@@ -55,6 +55,9 @@ void SLANG_MEMORY_ManFree(unsigned i) {
         printf("Error: Trying to free already freed memory\n");
         return;
     }
+    if(SLANG_CFG_VerboseMode)
+        printf("Manually freed PoolID (%d)\n", i);
+    free(memoryPool[i]);
     memoryPool[i] = nullPtr;
 }
 
