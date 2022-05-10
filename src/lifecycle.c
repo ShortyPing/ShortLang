@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "code/tokenizer.h"
 
+// This method clears ALL memory used in this program | should be called instead of exit() or return in main function
 void SLANG_LIFECYCLE_Exit(unsigned code) {
     SLANG_MEMORY_Free();
     SLANG_Tokenizer_Invalidate();
