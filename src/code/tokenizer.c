@@ -15,17 +15,18 @@ unsigned bufferSize;
 void SLANG_Tokenizer_Init() {
     posPtr = 0;
     bufferSize = 10;
-    tokenBuffer = malloc(sizeof(SLANG_Token) * 10);
+    tokenBuffer = malloc(sizeof(SLANG_Token*) * 10);
     if (SLANG_CFG_VerboseMode)
         printf("Initialized Tokenizer (buff_size:%d, pos:%d)\n", bufferSize, posPtr);
     SLANG_Tokenizer_ClearBuffer(0);
 }
 
+//TODO: fix automatic limit increase
 unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, char *val) {
-    if (posPtr == bufferSize) {
-
-        tokenBuffer = realloc(tokenBuffer, (sizeof(SLANG_Token) * bufferSize) + (sizeof(SLANG_Token) * 5));
-        bufferSize += 5;
+    if (posPtr == (bufferSize-1)) {
+        printf("ABASA %lu\n", (sizeof(SLANG_Token) * bufferSize) + (sizeof(SLANG_Token) * 10));
+        tokenBuffer = realloc(tokenBuffer, ((sizeof(SLANG_Token*) * bufferSize) + (sizeof(SLANG_Token*) * 10)));
+        bufferSize += 10;
     }
     SLANG_Token *token = tokenBuffer[posPtr++];
     token->pos = pos;

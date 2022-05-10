@@ -5,6 +5,8 @@
 #ifndef SLANG_MEMORY_H
 #define SLANG_MEMORY_H
 
+extern unsigned bufferSize;
+extern unsigned posPtr;
 
 void SLANG_MEMORY_Init();
 int SLANG_MEMORY_Add(void*);

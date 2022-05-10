@@ -38,6 +38,19 @@ int main(int argc, char* argv[]) {
     SLANG_FILE_ReadFile(SLANG_CFG_File);
     SLANG_Tokenizer_Init();
 
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    SLANG_Tokenizer_AddToken(STAR, 4, "d");
+    printf("SIZE: %d | Ptr: %d\n", bufferSize, posPtr);
+
     SLANG_LIFECYCLE_Exit(0);
     return 0;
 }
