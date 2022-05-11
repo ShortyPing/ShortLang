@@ -12,7 +12,11 @@
 SLANG_Token **tokenBuffer;
 unsigned posPtr;
 unsigned bufferSize;
-
+const char weirdCharacters[] = {
+        '\n',
+        ' ',
+        '\t'
+};
 
 void SLANG_Tokenizer_Init() {
     posPtr = 0;
@@ -29,81 +33,106 @@ void clearBuff(char *buff, unsigned len) {
     }
 }
 
+void resetControlVariables(char *buff, unsigned len, unsigned *tokPos) {
+    clearBuff(buff, len);
+    *tokPos = 0;
+}
+
+unsigned isWeirdCharacter(char c) {
+    int i = 0;
+    while (weirdCharacters[i] != 0) {
+        if (weirdCharacters[i] == c) {
+            return 1;
+        }
+        i++;
+    }
+    return 0;
+}
+
+SLANG_TokenType getType(char c) {
+    if (isdigit(c)) {
+        return INT_LITERAL;
+    }
+    if (isalpha(c)) {
+        return IDENTIFIER;
+    }
+    if (c == SLANG_Tokenizer_GetToken(LPARENTHESE)) return LPARENTHESE;
+    if (c == SLANG_Tokenizer_GetToken(RPARENTHESE)) return RPARENTHESE;
+    if (c == SLANG_Tokenizer_GetToken(LBRACE)) return LBRACE;
+    if (c == SLANG_Tokenizer_GetToken(RBRACE)) return RBRACE;
+    if (c == SLANG_Tokenizer_GetToken(RBRACKET)) return RBRACKET;
+    if (c == SLANG_Tokenizer_GetToken(LBRACKET)) return LBRACKET;
+    return UNKNOWN;
+}
+
+unsigned isSpecialCharacter(SLANG_TokenType type) {
+    return type != IDENTIFIER && type != INT_LITERAL && type != STRING_LITERAL;
+}
+
 void SLANG_Tokenizer_Analyze(char *str) {
     size_t len = strlen(str);
     const int buffSize = 128;
     char buff[buffSize];
     clearBuff(buff, buffSize);
-    int tokPos = 0;
+    unsigned tokPos = 0;
     SLANG_TokenType type = UNKNOWN;
-    int line = 1;
+    unsigned line = 1;
     for (int i = 0; i < len; i++) {
 
-        if(str[i] == 0x0a) {
+        // increment line at newline
+        if (str[i] == '\n')
             line++;
-        }
 
-        // check if current char is string literal (")
-        if (str[i] == SLANG_Tokenizer_GetToken(STRING_LITERAL)) {
-            // if scope type is string literal it closes current string literal and submits the token to the buffer
-            // else it continues to add characters to buffer
+        // check if char is string literal
+        if (SLANG_Tokenizer_GetToken(STRING_LITERAL) == str[i]) {
+            // check if current type is string literal
+            // when yes, push token else create new string literal
             if (type == STRING_LITERAL) {
                 type = UNKNOWN;
                 SLANG_Tokenizer_AddToken(STRING_LITERAL, i, line, buff);
-                tokPos = 0;
-                clearBuff(buff, buffSize);
-                continue;
-            } else {
-                type = STRING_LITERAL;
+                resetControlVariables(buff, len, &tokPos);
                 continue;
             }
-
-        } else {
-            if (type == STRING_LITERAL) {
-                buff[tokPos++] = str[i];
-                continue;
-            }
-        }
-
-        // Check if is braces or parentheses etc. and submit them as tokens
-        if(str[i] == SLANG_Tokenizer_GetToken(LPARENTHESE)) {
-            buff[tokPos++] = str[i];
-            SLANG_Tokenizer_AddToken(LPARENTHESE, i, line, buff);
-            clearBuff(buff, buffSize);
-            tokPos = 0;
-            continue;
-        }
-        if(str[i] == SLANG_Tokenizer_GetToken(RPARENTHESE)) {
-            buff[tokPos++] = str[i];
-            SLANG_Tokenizer_AddToken(RPARENTHESE, i, line, buff);
-            clearBuff(buff, buffSize);
-            tokPos = 0;
+            // create new string literal
+            type = STRING_LITERAL;
             continue;
         }
 
-        // check if is digit, when there is not int literal start a new one else add to buffer... when it detects a non-digit
-        // character in INT_LITERAL scope then terminate the literal and submit the token
-        if (isdigit(str[i])) {
-            if (type != INT_LITERAL) {
-                type = INT_LITERAL;
-            }
+        if (type == STRING_LITERAL) {
             buff[tokPos++] = str[i];
             continue;
-        } else {
-            if(type == INT_LITERAL) {
+        }
+
+        if (isWeirdCharacter(str[i])) {
+            if (type != UNKNOWN) {
+                SLANG_Tokenizer_AddToken(type, i, line, buff);
+                resetControlVariables(buff, buffSize, &tokPos);
+            }
+            continue;
+        }
+
+        if (tokPos == 0)
+            type = getType(str[i]);
+
+        SLANG_TokenType t = getType(str[i]);
+        if ((type == t || (type == IDENTIFIER && t == INT_LITERAL)) && type != UNKNOWN) {
+            buff[tokPos++] = str[i];
+            if (isSpecialCharacter(type)) {
+                SLANG_Tokenizer_AddToken(type, i, line, buff);
                 type = UNKNOWN;
-                SLANG_Tokenizer_AddToken(INT_LITERAL, i, line, buff);
+                resetControlVariables(buff, buffSize, &tokPos);
+                continue;
             }
+        } else {
+            SLANG_Tokenizer_AddToken(type, i, line, buff);
+            type = UNKNOWN;
             clearBuff(buff, buffSize);
-            tokPos = 0;
+            continue;
+        }
+        if (i + 1 >= len) {
+            SLANG_Tokenizer_AddToken(type, i, line, buff);
         }
 
-
-
-        // buffer clear... should not be executed
-        // this clears the buffer if anything wrong happens
-        clearBuff(buff, buffSize);
-        tokPos = 0;
     }
 }
 

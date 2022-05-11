@@ -5,6 +5,7 @@
 #ifndef SLANG_TOKENIZER_H
 #define SLANG_TOKENIZER_H
 
+
 typedef enum {
 
     // General
@@ -46,6 +47,7 @@ typedef struct {
     char* value;
     unsigned line;
 } SLANG_Token;
+
 
 void SLANG_Tokenizer_ClearBuffer(unsigned);
 void SLANG_Tokenizer_Init();

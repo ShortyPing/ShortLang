@@ -36,7 +36,8 @@ int main(int argc, char *argv[]) {
         printf("Error: No file specified\n");
         SLANG_LIFECYCLE_Exit(1);
     }
-    printf("Loading File (%s)...\n", SLANG_CFG_File);
+    if(SLANG_CFG_VerboseMode)
+        printf("Loading File (%s)...\n", SLANG_CFG_File);
 
     SLANG_Tokenizer_Init();
 
