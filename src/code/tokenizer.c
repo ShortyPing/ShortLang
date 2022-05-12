@@ -21,7 +21,7 @@ const char weirdCharacters[] = {
 void SLANG_Tokenizer_Init() {
     posPtr = 0;
     bufferSize = 10;
-    tokenBuffer = malloc(sizeof(SLANG_Token *) * 10);
+    tokenBuffer = malloc(sizeof(SLANG_Token *) * 50);
     if (SLANG_CFG_VerboseMode)
         printf("Initialized Tokenizer (buff_size:%d, pos:%d)\n", bufferSize, posPtr);
     SLANG_Tokenizer_ClearBuffer(0);
@@ -175,8 +175,8 @@ unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, unsigned l
     if(type != 0)
         printf("Added token type %d value %s (%d)\n", type, val, line);
     if (posPtr == (bufferSize - 1)) {
-        tokenBuffer = realloc(tokenBuffer, (bufferSize + 10) * sizeof(SLANG_Token));
-        bufferSize += 10;
+        tokenBuffer = realloc(tokenBuffer, (bufferSize + 50) * sizeof(SLANG_Token));
+        bufferSize += 50;
         SLANG_Tokenizer_ClearBuffer(1);
     }
 
