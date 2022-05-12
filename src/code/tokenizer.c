@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-
+#include "../lifecycle.h"
 SLANG_Token **tokenBuffer;
 unsigned posPtr;
 unsigned bufferSize;
@@ -49,20 +49,23 @@ unsigned isWeirdCharacter(char c) {
     return 0;
 }
 
-SLANG_TokenType getType(char c) {
-    if (isdigit(c)) {
-        return INT_LITERAL;
-    }
-    if (isalpha(c)) {
-        return IDENTIFIER;
-    }
-    if (c == SLANG_Tokenizer_GetToken(LPARENTHESE)) return LPARENTHESE;
-    if (c == SLANG_Tokenizer_GetToken(RPARENTHESE)) return RPARENTHESE;
-    if (c == SLANG_Tokenizer_GetToken(LBRACE)) return LBRACE;
-    if (c == SLANG_Tokenizer_GetToken(RBRACE)) return RBRACE;
-    if (c == SLANG_Tokenizer_GetToken(RBRACKET)) return RBRACKET;
-    if (c == SLANG_Tokenizer_GetToken(LBRACKET)) return LBRACKET;
-    return UNKNOWN;
+void parseSyntaxTokens(SLANG_TokenType *type, char c) {
+    if (c == SLANG_Tokenizer_GetToken(LPARENTHESE)) *type = LPARENTHESE;
+    if (c == SLANG_Tokenizer_GetToken(RPARENTHESE)) *type = RPARENTHESE;
+    if (c == SLANG_Tokenizer_GetToken(LBRACKET)) *type = LBRACKET;
+    if (c == SLANG_Tokenizer_GetToken(RBRACKET)) *type = RBRACKET;
+    if (c == SLANG_Tokenizer_GetToken(LBRACE)) *type = LBRACE;
+    if (c == SLANG_Tokenizer_GetToken(RBRACE)) *type = RBRACE;
+    if (c == SLANG_Tokenizer_GetToken(COLON)) *type = COLON;
+    if (c == SLANG_Tokenizer_GetToken(SEMICOLON)) *type = SEMICOLON;
+    if (c == SLANG_Tokenizer_GetToken(EQUALS)) *type = EQUALS;
+    if (c == SLANG_Tokenizer_GetToken(STAR)) *type = STAR;
+    if (c == SLANG_Tokenizer_GetToken(SLASH)) *type = SLASH;
+    if (c == SLANG_Tokenizer_GetToken(DASH)) *type = DASH;
+    if (c == SLANG_Tokenizer_GetToken(SMALLER)) *type = SMALLER;
+    if (c == SLANG_Tokenizer_GetToken(GREATER)) *type = GREATER;
+    if (c == SLANG_Tokenizer_GetToken(PLUS)) *type = PLUS;
+
 }
 
 unsigned isSpecialCharacter(SLANG_TokenType type) {
@@ -71,7 +74,7 @@ unsigned isSpecialCharacter(SLANG_TokenType type) {
 
 void SLANG_Tokenizer_Analyze(char *str) {
     size_t len = strlen(str);
-    const int buffSize = 128;
+    const int buffSize = 2048;
     char buff[buffSize];
     clearBuff(buff, buffSize);
     unsigned tokPos = 0;
@@ -80,64 +83,97 @@ void SLANG_Tokenizer_Analyze(char *str) {
     for (int i = 0; i < len; i++) {
 
         // increment line at newline
-        if (str[i] == '\n')
+        if (str[i] == '\n') {
             line++;
+            continue;
+        }
 
-        // check if char is string literal
-        if (SLANG_Tokenizer_GetToken(STRING_LITERAL) == str[i]) {
-            // check if current type is string literal
-            // when yes, push token else create new string literal
-            if (type == STRING_LITERAL) {
-                type = UNKNOWN;
-                SLANG_Tokenizer_AddToken(STRING_LITERAL, i, line, buff);
-                resetControlVariables(buff, len, &tokPos);
+        // BEGIN: STRING LITERAL TOKENIZING
+        if (str[i] == SLANG_Tokenizer_GetToken(STRING_LITERAL)) {
+            if(str[i-1] == '\\') {
+                buff[tokPos++] = str[i];
                 continue;
             }
-            // create new string literal
+            if (type == STRING_LITERAL) {
+                type = UNKNOWN;
+                SLANG_Tokenizer_AddToken(STRING_LITERAL, tokPos, line, buff);
+                resetControlVariables(buff, buffSize, &tokPos);
+                continue;
+            }
             type = STRING_LITERAL;
             continue;
         }
 
+
         if (type == STRING_LITERAL) {
-            buff[tokPos++] = str[i];
-            continue;
-        }
+            if(str[i] == '\\' && str[i-1] != '\\')
+                continue;
 
-        if (isWeirdCharacter(str[i])) {
-            if (type != UNKNOWN) {
-                SLANG_Tokenizer_AddToken(type, i, line, buff);
-                resetControlVariables(buff, buffSize, &tokPos);
+            if(str[i+1] == '\0') {
+                printf("Error: Trying to tokenize unclosed string literal! Aborting...\n");
+                SLANG_LIFECYCLE_Exit(1);
+                return;
             }
+            buff[tokPos++] = str[i];
+            continue;
+        }
+        // END: STRING LITERAL TOKENIZING
+
+        if (isdigit(str[i]) && (type == UNKNOWN || type == INT_LITERAL)) {
+            type = INT_LITERAL;
+            buff[tokPos++] = str[i];
             continue;
         }
 
-        if (tokPos == 0)
-            type = getType(str[i]);
-
-        SLANG_TokenType t = getType(str[i]);
-        if ((type == t || (type == IDENTIFIER && t == INT_LITERAL)) && type != UNKNOWN) {
+        if (!isdigit(str[i]) && type == INT_LITERAL) {
+            i--;
+            SLANG_Tokenizer_AddToken(INT_LITERAL, tokPos, line, buff);
+            resetControlVariables(buff, buffSize, &tokPos);
+            type = UNKNOWN;
+            continue;
+        }
+        if (str[i] == ' ') {
             buff[tokPos++] = str[i];
-            if (isSpecialCharacter(type)) {
-                SLANG_Tokenizer_AddToken(type, i, line, buff);
-                type = UNKNOWN;
+            SLANG_Tokenizer_AddToken(UNKNOWN, tokPos, line, buff);
+            resetControlVariables(buff, buffSize, &tokPos);
+            type = UNKNOWN;
+            continue;
+        }
+        if (type == UNKNOWN) {
+            parseSyntaxTokens(&type, str[i]);
+            if (type != UNKNOWN) {
+                buff[tokPos++] = str[i];
+                SLANG_Tokenizer_AddToken(type, tokPos, line, buff);
                 resetControlVariables(buff, buffSize, &tokPos);
+                type = UNKNOWN;
                 continue;
             }
-        } else {
-            SLANG_Tokenizer_AddToken(type, i, line, buff);
-            type = UNKNOWN;
-            clearBuff(buff, buffSize);
+            type = IDENTIFIER;
+            buff[tokPos++] = str[i];
+            if(!isalpha(str[i+1])) {
+                SLANG_Tokenizer_AddToken(type, tokPos, line, buff);
+                resetControlVariables(buff, buffSize, &tokPos);
+                type = UNKNOWN;
+                continue;
+            }
             continue;
         }
-        if (i + 1 >= len) {
-            SLANG_Tokenizer_AddToken(type, i, line, buff);
+        type = IDENTIFIER;
+        buff[tokPos++] = str[i];
+        if(!isalpha(str[i+1])) {
+            SLANG_Tokenizer_AddToken(type, tokPos, line, buff);
+            resetControlVariables(buff, buffSize, &tokPos);
+            type = UNKNOWN;
+            continue;
         }
 
     }
 }
 
+
 unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, unsigned line, char *val) {
-    printf("Added token type %d value %s\n", type, val);
+    if(type != 0)
+        printf("Added token type %d value %s (%d)\n", type, val, line);
     if (posPtr == (bufferSize - 1)) {
         tokenBuffer = realloc(tokenBuffer, (bufferSize + 10) * sizeof(SLANG_Token));
         bufferSize += 10;
@@ -174,43 +210,47 @@ void SLANG_Tokenizer_Invalidate() {
 char SLANG_Tokenizer_GetToken(SLANG_TokenType type) {
     switch (type) {
         case RPARENTHESE:
-            return 0x29;
+            return ')';
         case LPARENTHESE:
-            return 0x28;
+            return '(';
         case RBRACKET:
-            return 0x5D;
+            return ']';
         case LBRACKET:
-            return 0x5B;
+            return '[';
         case RBRACE:
-            return 0x7B;
+            return '}';
         case LBRACE:
-            return 0x7D;
+            return '{';
         case COLON:
-            return 0x3A;
+            return ':';
         case COMMA:
-            return 0x2C;
+            return ',';
         case DASH:
-            return 0x2D;
+            return '-';
         case DOT:
-            return 0x2C;
+            return '.';
         case EQUALS:
-            return 0x3D;
+            return '=';
         case GREATER:
-            return 0x3E;
+            return '>';
         case HASHTAG:
-            return 0x23;
+            return '#';
         case STRING_LITERAL:
-            return 0x22;
+            return '"';
         case PLUS:
-            return 0x2B;
+            return '+';
         case QUESTION:
-            return 0x3F;
+            return '?';
         case SLASH:
-            return 0x2F;
+            return '/';
         case SMALLER:
-            return 0x3C;
+            return '<';
         case STAR:
-            return 0x2A;
+            return '*';
+        case CHAR_LITERAL:
+            return '\'';
+        case SEMICOLON:
+            return ';';
         default:
             return 0x0;
     }

@@ -9,34 +9,36 @@
 typedef enum {
 
     // General
-    UNKNOWN = 0x0000,
-    IDENTIFIER = 0x0001,
+    UNKNOWN,
+    IDENTIFIER,
 
     // Literals
-    STRING_LITERAL = 0x0002,
-    INT_LITERAL = 0x0003,
+    STRING_LITERAL,
+    INT_LITERAL,
+    CHAR_LITERAL,
 
     // Brackets, Braces and Parentheses
-    LPARENTHESE = 0x0004,
-    RPARENTHESE = 0x0005,
-    LBRACE = 0x0006,
-    RBRACE = 0x0007,
-    LBRACKET = 0x0008,
-    RBRACKET = 0x0009,
+    LPARENTHESE,
+    RPARENTHESE,
+    LBRACE,
+    RBRACE,
+    LBRACKET,
+    RBRACKET,
 
     // Symbols
-    DASH = 0x000A,
-    PLUS = 0x000B,
-    STAR = 0x000C,
-    SLASH = 0x000D,
-    COLON = 0x000E,
-    QUESTION = 0x000F,
-    GREATER = 0x0010,
-    SMALLER = 0x0011,
-    EQUALS = 0x0012,
-    DOT = 0x0013,
-    COMMA = 0x0014,
-    HASHTAG = 0x0015
+    DASH,
+    PLUS,
+    STAR,
+    SLASH,
+    COLON,
+    QUESTION,
+    GREATER,
+    SMALLER,
+    EQUALS,
+    DOT,
+    COMMA,
+    HASHTAG,
+    SEMICOLON
 
 
 } SLANG_TokenType;
