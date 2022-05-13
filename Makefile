@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/shortping/CLionProjects/SLang
+CMAKE_SOURCE_DIR = /home/shortping/Coding/C/SLang
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/shortping/CLionProjects/SLang
+CMAKE_BINARY_DIR = /home/shortping/Coding/C/SLang
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/shortping/CLionProjects/SLang/CMakeFiles /home/shortping/CLionProjects/SLang//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/shortping/Coding/C/SLang/CMakeFiles /home/shortping/Coding/C/SLang//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/shortping/CLionProjects/SLang/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/shortping/Coding/C/SLang/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -273,6 +273,30 @@ src/memory.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SLang.dir/build.make CMakeFiles/SLang.dir/src/memory.c.s
 .PHONY : src/memory.c.s
 
+src/parser/ast.o: src/parser/ast.c.o
+.PHONY : src/parser/ast.o
+
+# target to build an object file
+src/parser/ast.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SLang.dir/build.make CMakeFiles/SLang.dir/src/parser/ast.c.o
+.PHONY : src/parser/ast.c.o
+
+src/parser/ast.i: src/parser/ast.c.i
+.PHONY : src/parser/ast.i
+
+# target to preprocess a source file
+src/parser/ast.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SLang.dir/build.make CMakeFiles/SLang.dir/src/parser/ast.c.i
+.PHONY : src/parser/ast.c.i
+
+src/parser/ast.s: src/parser/ast.c.s
+.PHONY : src/parser/ast.s
+
+# target to generate assembly for a file
+src/parser/ast.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SLang.dir/build.make CMakeFiles/SLang.dir/src/parser/ast.c.s
+.PHONY : src/parser/ast.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -300,6 +324,9 @@ help:
 	@echo "... src/memory.o"
 	@echo "... src/memory.i"
 	@echo "... src/memory.s"
+	@echo "... src/parser/ast.o"
+	@echo "... src/parser/ast.i"
+	@echo "... src/parser/ast.s"
 .PHONY : help
 
 

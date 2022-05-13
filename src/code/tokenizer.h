@@ -52,8 +52,8 @@ typedef struct {
 
 
 void SLANG_Tokenizer_ClearBuffer(unsigned);
-void SLANG_Tokenizer_Init();
-void SLANG_Tokenizer_Invalidate();
+void SLANG_Tokenizer_Init(void);
+void SLANG_Tokenizer_Invalidate(void);
 unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType, unsigned, unsigned, char*);
 char SLANG_Tokenizer_GetToken(SLANG_TokenType);
 void SLANG_Tokenizer_Analyze(char*);

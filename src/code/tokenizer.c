@@ -9,6 +9,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "../lifecycle.h"
+#include "../parser/ast.h"
 SLANG_Token **tokenBuffer;
 unsigned posPtr;
 unsigned bufferSize;
@@ -168,11 +169,13 @@ void SLANG_Tokenizer_Analyze(char *str) {
         }
 
     }
+    SLANG_AST_Create(tokenBuffer);
+    // tokenizing finished, use tokenBuffer* to pass into parser
 }
 
 
 unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, unsigned line, char *val) {
-    if(type != 0)
+    if(type != 0 && SLANG_CFG_VerboseMode)
         printf("Added token type %d value %s (%d)\n", type, val, line);
     if (posPtr == (bufferSize - 1)) {
         tokenBuffer = realloc(tokenBuffer, (bufferSize + 50) * sizeof(SLANG_Token));
