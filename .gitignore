@@ -1,3 +1,6 @@
+git-patch.sh
+clean.sh
+Makefile
 *.d
 *.o
 *.ko

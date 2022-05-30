@@ -1,50 +1,48 @@
-#include <stdio.h>
 #include "const.h"
-#include <string.h>
 #include "config.h"
-#include "f_read.h"
+#include "io.h"
 #include "memory.h"
 #include "lifecycle.h"
-#include <stdlib.h>
-#include "code/tokenizer.h"
+#include "tokenizer/tokenizer.h"
 #include "string.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
-void SLANG_Conf() {
-    SLANG_CFG_VerboseMode = 0;
-    SLANG_CFG_MemorySize = 128;
+void config() {
+    verboseMode = 0;
+    memorySize = 128;
 }
 
 int main(int argc, char *argv[]) {
-
-
-    SLANG_Conf();
+    config();
 
     for (int i = 0; i < argc; i++) {
 
         if (!(strcmp(argv[i], "--verbose"))) {
-            SLANG_CFG_VerboseMode = 1;
+            verboseMode = 1;
         }
         if (!(strcmp(argv[i], "--file"))) {
-            SLANG_CFG_File = argv[i + 1];
+            fileName = argv[i + 1];
         }
         if (!(strcmp(argv[i], "--heap"))) {
-            SLANG_CFG_MemorySize = atol(argv[i + 1]);
+            memorySize = atol(argv[i + 1]);
         }
     }
-    SLANG_MEMORY_Init();
-    if (SLANG_CFG_File == NULL) {
+    Memory_Init();
+    if (fileName == NULL) {
         printf("Error: No file specified\n");
-        SLANG_LIFECYCLE_Exit(1);
+        LifeCycle_Exit(1);
     }
-    if(SLANG_CFG_VerboseMode)
-        printf("Loading File (%s)...\n", SLANG_CFG_File);
+    if(verboseMode)
+        printf("Loading File (%s)...\n", fileName);
 
-    SLANG_Tokenizer_Init();
+    Tokenizer_Init();
 
-    SLANG_FILE_ReadFile(SLANG_CFG_File);
+    IO_ReadFile(fileName);
 
+    LifeCycle_Exit(0);
 
-    SLANG_LIFECYCLE_Exit(0);
     return 0;
 }
 

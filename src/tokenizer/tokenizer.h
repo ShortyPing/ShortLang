@@ -41,20 +41,20 @@ typedef enum {
     SEMICOLON
 
 
-} SLANG_TokenType;
+} TokenType;
 
 typedef struct {
-    SLANG_TokenType type;
+    TokenType type;
     unsigned pos;
     char* value;
     unsigned line;
-} SLANG_Token;
+} Token;
 
 
-void SLANG_Tokenizer_ClearBuffer(unsigned);
-void SLANG_Tokenizer_Init(void);
-void SLANG_Tokenizer_Invalidate(void);
-unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType, unsigned, unsigned, char*);
-char SLANG_Tokenizer_GetToken(SLANG_TokenType);
-void SLANG_Tokenizer_Analyze(char*);
+void Tokenizer_ClearBuffer(unsigned);
+void Tokenizer_Init(void);
+void Tokenizer_Invalidate(void);
+unsigned Tokenizer_AddToken(TokenType type, unsigned pos, unsigned line, char *val);
+char Tokenizer_GetToken(TokenType type);
+void Tokenizer_Analyze(char*);
 #endif //SLANG_TOKENIZER_H
