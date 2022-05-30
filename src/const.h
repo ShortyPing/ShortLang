@@ -48,3 +48,11 @@
 #   define IS_OPT_HEAP(x) \
             (!strcmp(x, OPT_HEAP) || !strcmp(x, OPT_HEAP_SHORT))
 #endif
+
+#ifndef DEBUG
+#   define DEBUG(...) \
+            if (verboseMode) {          \
+                printf("[Debug: %s] ", __func__);   \
+                printf(__VA_ARGS__); \
+            }
+#endif

@@ -6,6 +6,7 @@
 #include "../config.h"
 #include "../lifecycle.h"
 #include "../parser/ast.h"
+#include "../const.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -57,8 +58,7 @@ void Tokenizer_Init() {
     posPtr = 0;
     bufferSize = 10;
     tokenBuffer = malloc(sizeof(Token *) * 50);
-    if (verboseMode)
-        printf("Initialized Tokenizer (buff_size:%d, pos:%d)\n", bufferSize, posPtr);
+    DEBUG("Initialized Tokenizer (buff_size:%d, pos:%d)\n", bufferSize, posPtr);
     Tokenizer_ClearBuffer(0);
 }
 
@@ -208,8 +208,8 @@ void Tokenizer_Analyze(char *str) {
 
 
 unsigned Tokenizer_AddToken(TokenType type, unsigned pos, unsigned line, char *val) {
-    if(type != 0 && verboseMode)
-        printf("Added token type %s value %s (%d)\n", TokenType_ToString(type), val, line);
+    if(type != 0)
+        DEBUG("Added token type %s value %s (%d)\n", TokenType_ToString(type), val, line);
     if (posPtr == (bufferSize - 1)) {
         tokenBuffer = realloc(tokenBuffer, (bufferSize + 50) * sizeof(Token));
         bufferSize += 50;

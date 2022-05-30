@@ -13,7 +13,7 @@ void IO_ReadFile(char* p) {
     FILE* fptr;
     fptr = fopen(p, "r");
     if(fptr == NULL) {
-        printf("Error: Specified file not found or not enough permissions\n");
+        printf("Error: Unable to read file \"%s\".\n", p);
         LifeCycle_Exit(1);
     }
     unsigned long filesize;

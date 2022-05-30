@@ -5,6 +5,7 @@
 #include "lifecycle.h"
 #include "tokenizer/tokenizer.h"
 #include "string.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -17,24 +18,33 @@ void config() {
 int main(int argc, char *argv[]) {
     config();
 
-    for (int i = 0; i < argc; i++) {
+    if (argc < 2) {
+        printf("Error: No arguments.\n");
+        return 0;
+    }
+
+    for (int i = 1; i < argc; i++) {
         if (IS_OPT_VERBOSE(argv[i])) {
             verboseMode = 1;
+            continue;
         }
         if (IS_OPT_FILE(argv[i])) {
-            fileName = argv[i + 1];
+            fileName = argv[++ i];
+            continue;
         }
         if (IS_OPT_HEAP(argv[i])) {
-            memorySize = atol(argv[i + 1]);
+            memorySize = atol(argv[++ i]);
+            continue;
         }
+        printf("Error: Unknown command: %s\n", argv[i]);
+        return 0;
     }
     Memory_Init();
     if (fileName == NULL) {
         printf("Error: No file specified\n");
         LifeCycle_Exit(1);
     }
-    if(verboseMode)
-        printf("Loading File (%s)...\n", fileName);
+    DEBUG("Loading File (%s)...\n", fileName);
 
     Tokenizer_Init();
 

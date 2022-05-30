@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+#@cmake_minimum_required(VERSION 3.22)
 project(SLang C)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY dist)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY dist)

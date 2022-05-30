@@ -3,9 +3,10 @@
 //
 
 #include "memory.h"
+#include "config.h"
+#include "const.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "config.h"
 
 void **memoryPool;
 int currentSize;
@@ -16,12 +17,9 @@ void Memory_Init() {
     currentSize = -1;
     nullPtr = malloc(1);
 
-    if (verboseMode) {
-
-        printf("Initialized NULLPTR at(%p)\n", nullPtr);
-        printf("Initialized Memory-Manager (m_size:%lu, m_size_b:%lu, sp:%p, c_size:%d)\n", memorySize,
-               memorySize * sizeof(void *), memoryPool, currentSize);
-    }
+    DEBUG("Initialized NULLPTR at(%p)\n", nullPtr);
+    DEBUG("Initialized Memory-Manager (m_size:%lu, m_size_b:%lu, sp:%p, c_size:%d)\n", memorySize,
+           memorySize * sizeof(void *), memoryPool, currentSize);
     for(int i = 0; i < memorySize; i++) {
         memoryPool[i] = nullPtr;
     }
@@ -31,13 +29,11 @@ int Memory_Add(void *ptr) {
     
     for (int i = 0; i < memorySize; i++) {
         if (memoryPool[i] == nullPtr) {
-            if (verboseMode)
-                printf("Added Value to MemoryManager at %d(%s) value: %p\n", i, (memoryPool[i] == nullPtr)?"NULL":"OV", ptr);
+            DEBUG("Added Value to MemoryManager at %d(%s) value: %p\n", i, (memoryPool[i] == nullPtr)?"NULL":"OV", ptr);
 
             memoryPool[i] = ptr;
             if (i > currentSize) {
-                if (verboseMode)
-                    printf("Incremented c_size to %d\n", i);
+                DEBUG("Incremented c_size to %d\n", i);
                 currentSize = i;
             }
             return i;
@@ -56,8 +52,7 @@ void Memory_ManFree(unsigned i) {
         printf("Error: Trying to free already freed memory\n");
         return;
     }
-    if(verboseMode)
-        printf("Manually freed PoolID (%d)\n", i);
+    DEBUG("Manually freed PoolID (%d)\n", i);
     free(memoryPool[i]);
     memoryPool[i] = nullPtr;
 }
@@ -75,8 +70,7 @@ void Memory_Free() {
         if(memoryPool[i] != nullPtr)
             free(memoryPool[i]);
     }
-    if (verboseMode)
-        printf("Freed MemoryPool (%p)\n", memoryPool);
+    DEBUG("Freed MemoryPool (%p)\n", memoryPool);
     free(memoryPool);
     free(nullPtr);
 }
