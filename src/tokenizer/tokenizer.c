@@ -228,7 +228,6 @@ unsigned Tokenizer_AddToken(TokenType type, unsigned pos, unsigned line, char *v
 
 
 void Tokenizer_ClearBuffer(unsigned usePos) {
-
     for (unsigned i = (usePos ? (posPtr + 1) : 0); i < bufferSize; i++) {
         tokenBuffer[i] = malloc(sizeof(Token));
     }
@@ -241,52 +240,35 @@ void Tokenizer_Invalidate() {
     free(tokenBuffer);
 }
 
-// Transfer tokentype to ascii char > returns 0x00 when not found
+#define _(t, c) case t: return c;
+
+// Convert TokenType to an ASCII character; Return 0, if no match is found.
 char Tokenizer_GetToken(TokenType type) {
     switch (type) {
-        case RPARENTHESE:
-            return ')';
-        case LPARENTHESE:
-            return '(';
-        case RBRACKET:
-            return ']';
-        case LBRACKET:
-            return '[';
-        case RBRACE:
-            return '}';
-        case LBRACE:
-            return '{';
-        case COLON:
-            return ':';
-        case COMMA:
-            return ',';
-        case DASH:
-            return '-';
-        case DOT:
-            return '.';
-        case EQUALS:
-            return '=';
-        case GREATER:
-            return '>';
-        case HASHTAG:
-            return '#';
-        case STRING_LITERAL:
-            return '"';
-        case PLUS:
-            return '+';
-        case QUESTION:
-            return '?';
-        case SLASH:
-            return '/';
-        case SMALLER:
-            return '<';
-        case STAR:
-            return '*';
-        case CHAR_LITERAL:
-            return '\'';
-        case SEMICOLON:
-            return ';';
+        _(RPARENTHESE, ')')
+        _(LPARENTHESE, '(')
+        _(RBRACKET, ']')
+        _(LBRACKET, '[')
+        _(RBRACE, '}')
+        _(LBRACE, '{')
+        _(COLON, ':')
+        _(COMMA, ',')
+        _(DASH, '-')
+        _(DOT, '.')
+        _(EQUALS, '=')
+        _(GREATER, '>')
+        _(SMALLER, '<')
+        _(HASHTAG, '#')
+        _(STRING_LITERAL, '"')
+        _(PLUS, '+')
+        _(QUESTION, '?')
+        _(SLASH, '/')
+        _(STAR, '*')
+        _(CHAR_LITERAL, '\'')
+        _(SEMICOLON, ';')
         default:
-            return 0x0;
+            return '\0';
     }
 }
+
+#undef _
