@@ -4,8 +4,8 @@
 
 #ifndef SLANG_AST_H
 #define SLANG_AST_H
-#include "../code/tokenizer.h"
 
+#include "../tokenizer/tokenizer.h"
 
 
 #endif //SLANG_AST_H

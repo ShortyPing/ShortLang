@@ -5,11 +5,11 @@
 #ifndef SLANG_CONFIG_H
 #define SLANG_CONFIG_H
 
-typedef unsigned SLANG_CFG_BOOL;
+typedef unsigned char bool;
 
-extern SLANG_CFG_BOOL SLANG_CFG_VerboseMode;
-extern unsigned long SLANG_CFG_MemorySize;
+extern bool verboseMode;
+extern unsigned long memorySize;
 
-extern char* SLANG_CFG_File;
+extern char* fileName;
 
 #endif //SLANG_CONFIG_H

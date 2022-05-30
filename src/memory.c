@@ -11,32 +11,32 @@ void **memoryPool;
 int currentSize;
 void* nullPtr;
 
-void SLANG_MEMORY_Init() {
-    memoryPool = malloc(sizeof(void *) * SLANG_CFG_MemorySize);
+void Memory_Init() {
+    memoryPool = malloc(sizeof(void *) * memorySize);
     currentSize = -1;
     nullPtr = malloc(1);
 
-    if (SLANG_CFG_VerboseMode) {
+    if (verboseMode) {
 
         printf("Initialized NULLPTR at(%p)\n", nullPtr);
-        printf("Initialized Memory-Manager (m_size:%lu, m_size_b:%lu, sp:%p, c_size:%d)\n", SLANG_CFG_MemorySize,
-               SLANG_CFG_MemorySize * sizeof(void *), memoryPool, currentSize);
+        printf("Initialized Memory-Manager (m_size:%lu, m_size_b:%lu, sp:%p, c_size:%d)\n", memorySize,
+               memorySize * sizeof(void *), memoryPool, currentSize);
     }
-    for(int i = 0; i < SLANG_CFG_MemorySize; i++) {
+    for(int i = 0; i < memorySize; i++) {
         memoryPool[i] = nullPtr;
     }
 }
 
-int SLANG_MEMORY_Add(void *ptr) {
+int Memory_Add(void *ptr) {
     
-    for (int i = 0; i < SLANG_CFG_MemorySize; i++) {
+    for (int i = 0; i < memorySize; i++) {
         if (memoryPool[i] == nullPtr) {
-            if (SLANG_CFG_VerboseMode)
+            if (verboseMode)
                 printf("Added Value to MemoryManager at %d(%s) value: %p\n", i, (memoryPool[i] == nullPtr)?"NULL":"OV", ptr);
 
             memoryPool[i] = ptr;
             if (i > currentSize) {
-                if (SLANG_CFG_VerboseMode)
+                if (verboseMode)
                     printf("Incremented c_size to %d\n", i);
                 currentSize = i;
             }
@@ -47,8 +47,8 @@ int SLANG_MEMORY_Add(void *ptr) {
     return -1;
 }
 
-void SLANG_MEMORY_ManFree(unsigned i) {
-    if(i > SLANG_CFG_MemorySize) {
+void Memory_ManFree(unsigned i) {
+    if(i > memorySize) {
         printf("Error: Trying to free invalid memory\n");
         return;
     }
@@ -56,26 +56,26 @@ void SLANG_MEMORY_ManFree(unsigned i) {
         printf("Error: Trying to free already freed memory\n");
         return;
     }
-    if(SLANG_CFG_VerboseMode)
+    if(verboseMode)
         printf("Manually freed PoolID (%d)\n", i);
     free(memoryPool[i]);
     memoryPool[i] = nullPtr;
 }
 
-void* SLANG_MEMORY_GetValue(unsigned i) {
-    if(i > SLANG_CFG_MemorySize) {
+void* Memory_GetValue(unsigned i) {
+    if(i > memorySize) {
         printf("Error: Trying to find invalid memory pointer");
         return nullPtr;
     }
     return memoryPool[i];
 }
 
-void SLANG_MEMORY_Free() {
-    for (int i = 0; i < SLANG_CFG_MemorySize; i++) {
+void Memory_Free() {
+    for (int i = 0; i < memorySize; i++) {
         if(memoryPool[i] != nullPtr)
             free(memoryPool[i]);
     }
-    if (SLANG_CFG_VerboseMode)
+    if (verboseMode)
         printf("Freed MemoryPool (%p)\n", memoryPool);
     free(memoryPool);
     free(nullPtr);

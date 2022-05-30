@@ -2,19 +2,19 @@
 // Created by shortping on 09.05.22.
 //
 
-#include "f_read.h"
+#include "io.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "memory.h"
 #include "lifecycle.h"
-#include "code/tokenizer.h"
+#include "tokenizer/tokenizer.h"
 
-void SLANG_FILE_ReadFile(char* p) {
+void IO_ReadFile(char* p) {
     FILE* fptr;
     fptr = fopen(p, "r");
     if(fptr == NULL) {
         printf("Error: Specified file not found or not enough permissions\n");
-        SLANG_LIFECYCLE_Exit(1);
+        LifeCycle_Exit(1);
     }
     unsigned long filesize;
     fseek(fptr, 0L, SEEK_END);
@@ -22,7 +22,7 @@ void SLANG_FILE_ReadFile(char* p) {
     filesize = ftell(fptr) * sizeof(char); // Filesize
 
     char *text = malloc(filesize + 1);
-    int txtId = SLANG_MEMORY_Add(text);
+    int txtId = Memory_Add(text);
 
     int buff;
 
@@ -33,8 +33,8 @@ void SLANG_FILE_ReadFile(char* p) {
     }
     text[filesize] = '\0';
     fclose(fptr);
-    SLANG_Tokenizer_Analyze(text);
-    SLANG_MEMORY_ManFree(txtId);
+    Tokenizer_Analyze(text);
+    Memory_ManFree(txtId);
     // Make something with text lol
 
 }

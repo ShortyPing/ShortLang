@@ -7,11 +7,12 @@
 
 extern unsigned bufferSize;
 extern unsigned posPtr;
-extern void* nullPtr;
+extern void *nullPtr;
 
-void SLANG_MEMORY_Init(void);
-int SLANG_MEMORY_Add(void*);
-void SLANG_MEMORY_Free(void);
-void SLANG_MEMORY_ManFree(unsigned);
-void* SLANG_MEMORY_GetValue(unsigned i);
+void Memory_Init(void);
+int Memory_Add(void *);
+void Memory_Free(void);
+void Memory_ManFree(unsigned);
+void* Memory_GetValue(unsigned);
+
 #endif //SLANG_MEMORY_H

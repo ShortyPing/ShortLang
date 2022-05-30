@@ -5,8 +5,8 @@
 #include "config.h"
 #include "stdio.h"
 
-SLANG_CFG_BOOL SLANG_CFG_VerboseMode;
-unsigned long SLANG_CFG_MemorySize;
+bool verboseMode;
+unsigned long memorySize;
 
-char* SLANG_CFG_File;
+char* fileName;
 

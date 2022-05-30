@@ -4,13 +4,14 @@
 
 #include "tokenizer.h"
 #include "../config.h"
+#include "../lifecycle.h"
+#include "../parser/ast.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "../lifecycle.h"
-#include "../parser/ast.h"
-SLANG_Token **tokenBuffer;
+
+Token **tokenBuffer;
 unsigned posPtr;
 unsigned bufferSize;
 const char weirdCharacters[] = {
@@ -21,7 +22,7 @@ const char weirdCharacters[] = {
 
 #define _(x) case x: return #x;
 
-char *ToString(SLANG_TokenType t) {
+char *TokenType_ToString(TokenType t) {
 	switch (t) {
 		_(UNKNOWN);
 		_(IDENTIFIER);
@@ -52,13 +53,13 @@ char *ToString(SLANG_TokenType t) {
 
 #undef _
 
-void SLANG_Tokenizer_Init() {
+void Tokenizer_Init() {
     posPtr = 0;
     bufferSize = 10;
-    tokenBuffer = malloc(sizeof(SLANG_Token *) * 50);
-    if (SLANG_CFG_VerboseMode)
+    tokenBuffer = malloc(sizeof(Token *) * 50);
+    if (verboseMode)
         printf("Initialized Tokenizer (buff_size:%d, pos:%d)\n", bufferSize, posPtr);
-    SLANG_Tokenizer_ClearBuffer(0);
+    Tokenizer_ClearBuffer(0);
 }
 
 void clearBuff(char *buff, unsigned len) {
@@ -83,36 +84,36 @@ unsigned isWeirdCharacter(char c) {
     return 0;
 }
 
-void parseSyntaxTokens(SLANG_TokenType *type, char c) {
-    if (c == SLANG_Tokenizer_GetToken(LPARENTHESE)) *type = LPARENTHESE;
-    if (c == SLANG_Tokenizer_GetToken(RPARENTHESE)) *type = RPARENTHESE;
-    if (c == SLANG_Tokenizer_GetToken(LBRACKET)) *type = LBRACKET;
-    if (c == SLANG_Tokenizer_GetToken(RBRACKET)) *type = RBRACKET;
-    if (c == SLANG_Tokenizer_GetToken(LBRACE)) *type = LBRACE;
-    if (c == SLANG_Tokenizer_GetToken(RBRACE)) *type = RBRACE;
-    if (c == SLANG_Tokenizer_GetToken(COLON)) *type = COLON;
-    if (c == SLANG_Tokenizer_GetToken(SEMICOLON)) *type = SEMICOLON;
-    if (c == SLANG_Tokenizer_GetToken(EQUALS)) *type = EQUALS;
-    if (c == SLANG_Tokenizer_GetToken(STAR)) *type = STAR;
-    if (c == SLANG_Tokenizer_GetToken(SLASH)) *type = SLASH;
-    if (c == SLANG_Tokenizer_GetToken(DASH)) *type = DASH;
-    if (c == SLANG_Tokenizer_GetToken(SMALLER)) *type = SMALLER;
-    if (c == SLANG_Tokenizer_GetToken(GREATER)) *type = GREATER;
-    if (c == SLANG_Tokenizer_GetToken(PLUS)) *type = PLUS;
+void parseSyntaxTokens(TokenType *type, char c) {
+    if (c == Tokenizer_GetToken(LPARENTHESE)) *type = LPARENTHESE;
+    if (c == Tokenizer_GetToken(RPARENTHESE)) *type = RPARENTHESE;
+    if (c == Tokenizer_GetToken(LBRACKET)) *type = LBRACKET;
+    if (c == Tokenizer_GetToken(RBRACKET)) *type = RBRACKET;
+    if (c == Tokenizer_GetToken(LBRACE)) *type = LBRACE;
+    if (c == Tokenizer_GetToken(RBRACE)) *type = RBRACE;
+    if (c == Tokenizer_GetToken(COLON)) *type = COLON;
+    if (c == Tokenizer_GetToken(SEMICOLON)) *type = SEMICOLON;
+    if (c == Tokenizer_GetToken(EQUALS)) *type = EQUALS;
+    if (c == Tokenizer_GetToken(STAR)) *type = STAR;
+    if (c == Tokenizer_GetToken(SLASH)) *type = SLASH;
+    if (c == Tokenizer_GetToken(DASH)) *type = DASH;
+    if (c == Tokenizer_GetToken(SMALLER)) *type = SMALLER;
+    if (c == Tokenizer_GetToken(GREATER)) *type = GREATER;
+    if (c == Tokenizer_GetToken(PLUS)) *type = PLUS;
 
 }
 
-unsigned isSpecialCharacter(SLANG_TokenType type) {
+unsigned isSpecialCharacter(TokenType type) {
     return type != IDENTIFIER && type != INT_LITERAL && type != STRING_LITERAL;
 }
 
-void SLANG_Tokenizer_Analyze(char *str) {
+void Tokenizer_Analyze(char *str) {
     size_t len = strlen(str);
     const int buffSize = 2048;
     char buff[buffSize];
     clearBuff(buff, buffSize);
     unsigned tokPos = 0;
-    SLANG_TokenType type = UNKNOWN;
+    TokenType type = UNKNOWN;
     unsigned line = 1;
     for (int i = 0; i < len; i++) {
 
@@ -123,14 +124,14 @@ void SLANG_Tokenizer_Analyze(char *str) {
         }
 
         // BEGIN: STRING LITERAL TOKENIZING
-        if (str[i] == SLANG_Tokenizer_GetToken(STRING_LITERAL)) {
+        if (str[i] == Tokenizer_GetToken(STRING_LITERAL)) {
             if(str[i-1] == '\\') {
                 buff[tokPos++] = str[i];
                 continue;
             }
             if (type == STRING_LITERAL) {
                 type = UNKNOWN;
-                SLANG_Tokenizer_AddToken(STRING_LITERAL, tokPos, line, buff);
+                Tokenizer_AddToken(STRING_LITERAL, tokPos, line, buff);
                 resetControlVariables(buff, buffSize, &tokPos);
                 continue;
             }
@@ -145,7 +146,7 @@ void SLANG_Tokenizer_Analyze(char *str) {
 
             if(str[i+1] == '\0') {
                 printf("Error: Trying to tokenize unclosed string literal! Aborting...\n");
-                SLANG_LIFECYCLE_Exit(1);
+                LifeCycle_Exit(1);
                 return;
             }
             buff[tokPos++] = str[i];
@@ -161,14 +162,14 @@ void SLANG_Tokenizer_Analyze(char *str) {
 
         if (!isdigit(str[i]) && type == INT_LITERAL) {
             i--;
-            SLANG_Tokenizer_AddToken(INT_LITERAL, tokPos, line, buff);
+            Tokenizer_AddToken(INT_LITERAL, tokPos, line, buff);
             resetControlVariables(buff, buffSize, &tokPos);
             type = UNKNOWN;
             continue;
         }
         if (str[i] == ' ') {
             buff[tokPos++] = str[i];
-            SLANG_Tokenizer_AddToken(UNKNOWN, tokPos, line, buff);
+            Tokenizer_AddToken(UNKNOWN, tokPos, line, buff);
             resetControlVariables(buff, buffSize, &tokPos);
             type = UNKNOWN;
             continue;
@@ -177,7 +178,7 @@ void SLANG_Tokenizer_Analyze(char *str) {
             parseSyntaxTokens(&type, str[i]);
             if (type != UNKNOWN) {
                 buff[tokPos++] = str[i];
-                SLANG_Tokenizer_AddToken(type, tokPos, line, buff);
+                Tokenizer_AddToken(type, tokPos, line, buff);
                 resetControlVariables(buff, buffSize, &tokPos);
                 type = UNKNOWN;
                 continue;
@@ -185,7 +186,7 @@ void SLANG_Tokenizer_Analyze(char *str) {
             type = IDENTIFIER;
             buff[tokPos++] = str[i];
             if(!isalpha(str[i+1])) {
-                SLANG_Tokenizer_AddToken(type, tokPos, line, buff);
+                Tokenizer_AddToken(type, tokPos, line, buff);
                 resetControlVariables(buff, buffSize, &tokPos);
                 type = UNKNOWN;
                 continue;
@@ -195,7 +196,7 @@ void SLANG_Tokenizer_Analyze(char *str) {
         type = IDENTIFIER;
         buff[tokPos++] = str[i];
         if(!isalpha(str[i+1])) {
-            SLANG_Tokenizer_AddToken(type, tokPos, line, buff);
+            Tokenizer_AddToken(type, tokPos, line, buff);
             resetControlVariables(buff, buffSize, &tokPos);
             type = UNKNOWN;
             continue;
@@ -206,17 +207,16 @@ void SLANG_Tokenizer_Analyze(char *str) {
 }
 
 
-unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, unsigned line, char *val) {
-    if(type != 0 && SLANG_CFG_VerboseMode)
-        printf("Added token type %s value %s (%d)\n", ToString(type), val, line);
+unsigned Tokenizer_AddToken(TokenType type, unsigned pos, unsigned line, char *val) {
+    if(type != 0 && verboseMode)
+        printf("Added token type %s value %s (%d)\n", TokenType_ToString(type), val, line);
     if (posPtr == (bufferSize - 1)) {
-        tokenBuffer = realloc(tokenBuffer, (bufferSize + 50) * sizeof(SLANG_Token));
+        tokenBuffer = realloc(tokenBuffer, (bufferSize + 50) * sizeof(Token));
         bufferSize += 50;
-        SLANG_Tokenizer_ClearBuffer(1);
+        Tokenizer_ClearBuffer(1);
     }
 
-
-    SLANG_Token *token = tokenBuffer[posPtr++];
+    Token *token = tokenBuffer[posPtr++];
 
     token->pos = pos;
     token->type = type;
@@ -227,22 +227,22 @@ unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, unsigned l
 }
 
 
-void SLANG_Tokenizer_ClearBuffer(unsigned usePos) {
+void Tokenizer_ClearBuffer(unsigned usePos) {
 
-    for (int i = (usePos ? (posPtr + 1) : 0); i < bufferSize; i++) {
-        tokenBuffer[i] = malloc(sizeof(SLANG_Token));
+    for (unsigned i = (usePos ? (posPtr + 1) : 0); i < bufferSize; i++) {
+        tokenBuffer[i] = malloc(sizeof(Token));
     }
 }
 
 // Frees all memory used by tokenizer
-void SLANG_Tokenizer_Invalidate() {
+void Tokenizer_Invalidate() {
     for (int i = 0; i < bufferSize; i++)
         free(tokenBuffer[i]);
     free(tokenBuffer);
 }
 
 // Transfer tokentype to ascii char > returns 0x00 when not found
-char SLANG_Tokenizer_GetToken(SLANG_TokenType type) {
+char Tokenizer_GetToken(TokenType type) {
     switch (type) {
         case RPARENTHESE:
             return ')';
