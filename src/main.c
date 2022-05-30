@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
         if (IS_OPT_FILE(argv[i])) {
             fileName = argv[i + 1];
         }
-        if (IS_OPT_VERBOSE(argv[i])) {
+        if (IS_OPT_HEAP(argv[i])) {
             memorySize = atol(argv[i + 1]);
         }
     }
