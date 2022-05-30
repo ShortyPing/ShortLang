@@ -18,14 +18,13 @@ int main(int argc, char *argv[]) {
     config();
 
     for (int i = 0; i < argc; i++) {
-
-        if (!(strcmp(argv[i], "--verbose"))) {
+        if (IS_OPT_VERBOSE(argv[i])) {
             verboseMode = 1;
         }
-        if (!(strcmp(argv[i], "--file"))) {
+        if (IS_OPT_FILE(argv[i])) {
             fileName = argv[i + 1];
         }
-        if (!(strcmp(argv[i], "--heap"))) {
+        if (IS_OPT_VERBOSE(argv[i])) {
             memorySize = atol(argv[i + 1]);
         }
     }

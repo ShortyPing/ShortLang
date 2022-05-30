@@ -9,3 +9,42 @@
 #ifndef SLANG_AUTHORS
 #   define SLANG_AUTHORS "Michael Steinmoetzger"
 #endif
+
+#ifndef OPT_VERBOSE
+#   define OPT_VERBOSE "--verbose"
+#endif
+
+#ifndef OPT_VERBOSE_SHORT
+#   define OPT_VERBOSE_SHORT "-v"
+#endif
+
+#ifndef OPT_FILE
+#   define OPT_FILE "--file"
+#endif
+
+#ifndef OPT_FILE_SHORT
+#   define OPT_FILE_SHORT "-f"
+#endif
+
+#ifndef OPT_HEAP
+#   define OPT_HEAP "--heap"
+#endif
+
+#ifndef OPT_HEAP_SHORT
+#   define OPT_HEAP_SHORT "-h"
+#endif
+
+#ifndef IS_OPT_VERBOSE
+#   define IS_OPT_VERBOSE(x) \
+            (!strcmp(x, OPT_VERBOSE) || !strcmp(x, OPT_VERBOSE_SHORT))
+#endif
+
+#ifndef IS_OPT_FILE
+#   define IS_OPT_FILE(x) \
+            (!strcmp(x, OPT_FILE) || !strcmp(x, OPT_FILE_SHORT))
+#endif
+
+#ifndef IS_OPT_HEAP
+#   define IS_OPT_HEAP(x) \
+            (!strcmp(x, OPT_HEAP) || !strcmp(x, OPT_HEAP_SHORT))
+#endif
