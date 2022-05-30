@@ -21,6 +21,8 @@ const char weirdCharacters[] = {
         '\t'
 };
 
+
+
 #define _(x) case x: return #x;
 
 char *TokenType_ToString(TokenType t) {
@@ -122,7 +124,7 @@ void Tokenizer_Analyze(char *str) {
             line++;
             continue;
         }
-
+		
         // BEGIN: STRING LITERAL TOKENIZING
         if (str[i] == Tokenizer_GetToken(STRING_LITERAL)) {
             if(str[i-1] == '\\') {
@@ -139,7 +141,7 @@ void Tokenizer_Analyze(char *str) {
             continue;
         }
 
-
+	
         if (type == STRING_LITERAL) {
             if(str[i] == '\\' && str[i-1] != '\\')
                 continue;
@@ -153,6 +155,10 @@ void Tokenizer_Analyze(char *str) {
             continue;
         }
         // END: STRING LITERAL TOKENIZING
+	
+	// Check for some weird whitespace characters
+	if(str[i] == ' ' || str[i] == '\t')
+		continue;
 
         if (isdigit(str[i]) && (type == UNKNOWN || type == INT_LITERAL)) {
             type = INT_LITERAL;
