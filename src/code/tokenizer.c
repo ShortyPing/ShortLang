@@ -19,6 +19,39 @@ const char weirdCharacters[] = {
         '\t'
 };
 
+#define _(x) case x: return #x;
+
+char *ToString(SLANG_TokenType t) {
+	switch (t) {
+		_(UNKNOWN);
+		_(IDENTIFIER);
+		_(STRING_LITERAL);
+		_(INT_LITERAL);
+		_(CHAR_LITERAL);
+		_(LPARENTHESE);
+		_(RPARENTHESE);
+		_(LBRACE);
+		_(RBRACE);
+		_(LBRACKET);
+		_(RBRACKET);
+		_(DASH);
+		_(PLUS);
+		_(STAR);
+		_(SLASH);
+		_(COLON);
+		_(QUESTION);
+		_(GREATER);
+		_(SMALLER);
+		_(EQUALS);
+		_(DOT);
+		_(COMMA);
+		_(HASHTAG);
+		_(SEMICOLON);
+	}
+}
+
+#undef _
+
 void SLANG_Tokenizer_Init() {
     posPtr = 0;
     bufferSize = 10;
@@ -169,14 +202,13 @@ void SLANG_Tokenizer_Analyze(char *str) {
         }
 
     }
-    SLANG_AST_Create(tokenBuffer);
     // tokenizing finished, use tokenBuffer* to pass into parser
 }
 
 
 unsigned SLANG_Tokenizer_AddToken(SLANG_TokenType type, unsigned pos, unsigned line, char *val) {
     if(type != 0 && SLANG_CFG_VerboseMode)
-        printf("Added token type %d value %s (%d)\n", type, val, line);
+        printf("Added token type %s value %s (%d)\n", ToString(type), val, line);
     if (posPtr == (bufferSize - 1)) {
         tokenBuffer = realloc(tokenBuffer, (bufferSize + 50) * sizeof(SLANG_Token));
         bufferSize += 50;
