@@ -41,4 +41,21 @@ struct Node {
     } body;
 };
 
+/**
+ * Reserves memory for the base structure (and sets its type).
+ * Not intended to be use outside of /ast.c/
+ * @return
+ */
+Node *Node_CreateBase(NodeType);
+
+/**
+ * Destroy a full node tree structure, rather than a single node
+ */
+void Node_DestroyRecurse(Node *);
+
+Node *Node_CreateStringLiteral(char *);
+Node *Node_CreateIntegerLiteral(int);
+Node *Node_CreateRealLiteral(double);
+Node *Node_CreateBinaryExpression(Node *, Node *, BinaryOperator);
+
 #endif //SLANG_AST_H
