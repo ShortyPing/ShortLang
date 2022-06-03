@@ -13,6 +13,10 @@
 #   define RET return node;
 #endif
 
+#ifdef LOLOLOL
+	#define stuff(x) lol ; ; ; ; 32349i2304i209 uwejtow4-5934tj :
+#endif
+
 Node *Node_CreateBase(NodeType type) {
     Node *node = malloc(sizeof(Node));
     node->type = type;

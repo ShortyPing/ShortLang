@@ -191,7 +191,7 @@ void Tokenizer_Analyze(char *str) {
             }
             type = IDENTIFIER;
             buff[tokPos++] = str[i];
-            if(!isalpha(str[i+1])) {
+            if(!isalpha(str[i+1]) || str[i+1] == '_') {
                 Tokenizer_AddToken(type, tokPos, line, buff);
                 resetControlVariables(buff, buffSize, &tokPos);
                 type = UNKNOWN;
@@ -201,7 +201,7 @@ void Tokenizer_Analyze(char *str) {
         }
         type = IDENTIFIER;
         buff[tokPos++] = str[i];
-        if(!isalpha(str[i+1])) {
+        if(!isalpha(str[i+1]) || str[i + 1] == '_') {
             Tokenizer_AddToken(type, tokPos, line, buff);
             resetControlVariables(buff, buffSize, &tokPos);
             type = UNKNOWN;
