@@ -17,7 +17,7 @@ void config() {
 
 int main(int argc, char *argv[]) {
     config();
-
+    printf("ShortLang v%s made by (%s)\n", SLANG_VERSION, SLANG_AUTHORS);
     if (argc < 2) {
         printf("Error: No arguments.\n");
         return 0;

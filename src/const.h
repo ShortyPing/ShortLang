@@ -7,7 +7,7 @@
 #endif
 
 #ifndef SLANG_AUTHORS
-#   define SLANG_AUTHORS "Michael Steinmoetzger"
+#   define SLANG_AUTHORS "Michael Steinmoetzger, Piotr Krzysztof Wyrwas"
 #endif
 
 #ifndef OPT_VERBOSE
