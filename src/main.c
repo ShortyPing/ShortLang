@@ -55,7 +55,6 @@ int main(int argc, char *argv[]) {
     Parser_Init();
 
 
-    Parser_Destroy();
 
 
     LifeCycle_Exit(0);
