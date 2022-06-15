@@ -5,6 +5,8 @@
 #include "lifecycle.h"
 #include "tokenizer/tokenizer.h"
 #include "string.h"
+#include "parser/ast.h"
+#include "parser/parse.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -49,6 +51,12 @@ int main(int argc, char *argv[]) {
     Tokenizer_Init();
 
     IO_ReadFile(fileName);
+
+    Parser_Init();
+
+
+    Parser_Destroy();
+
 
     LifeCycle_Exit(0);
 

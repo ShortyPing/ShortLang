@@ -57,4 +57,8 @@ void Tokenizer_Invalidate(void);
 unsigned Tokenizer_AddToken(TokenType type, unsigned pos, unsigned line, char *val);
 char Tokenizer_GetToken(TokenType type);
 void Tokenizer_Analyze(char*);
+
+extern Token **tokenBuffer;
+extern unsigned posPtr;
+
 #endif //SLANG_TOKENIZER_H

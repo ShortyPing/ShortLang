@@ -102,6 +102,7 @@ void parseSyntaxTokens(TokenType *type, char c) {
     if (c == Tokenizer_GetToken(SMALLER)) *type = SMALLER;
     if (c == Tokenizer_GetToken(GREATER)) *type = GREATER;
     if (c == Tokenizer_GetToken(PLUS)) *type = PLUS;
+    if (c == Tokenizer_GetToken(COMMA)) *type = COMMA;
 
 }
 
@@ -210,6 +211,7 @@ void Tokenizer_Analyze(char *str) {
 
     }
     // tokenizing finished, use tokenBuffer* to pass into parser
+
 }
 
 
